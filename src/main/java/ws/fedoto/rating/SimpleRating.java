@@ -137,4 +137,75 @@ public class SimpleRating<K> implements Rating<K> {
             oldNext.setPrev(oldPrev);
         }
     }
+
+    static private class Node<K> implements Comparable<Node<K>> {
+        private K key;
+        private int weight;
+        private Node<K> next;
+        private Node<K> prev;
+
+        public Node(K key) {
+            this.key = key;
+        }
+
+        public K getKey() {
+            return key;
+        }
+
+        public int getWeight() {
+            return weight;
+        }
+
+        void setWeight(int weight) {
+            this.weight = weight;
+        }
+
+        public void incWeight() {
+            this.weight++;
+        }
+
+        public Node<K> getNext() {
+            return next;
+        }
+
+        public void setNext(Node<K> next) {
+            this.next = next;
+        }
+
+        public Node<K> getPrev() {
+            return prev;
+        }
+
+        public void setPrev(Node<K> prev) {
+            this.prev = prev;
+        }
+
+        @Override
+        public int compareTo(Node<K> o) {
+            return weight - o.weight;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Node node = (Node) o;
+
+            return key.equals(node.key);
+        }
+
+        @Override
+        public int hashCode() {
+            return key.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "key=" + key +
+                    ", weight=" + weight +
+                    '}';
+        }
+    }
 }
