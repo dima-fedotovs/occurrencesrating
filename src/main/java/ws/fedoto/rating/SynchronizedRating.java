@@ -20,6 +20,7 @@
 package ws.fedoto.rating;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -39,5 +40,10 @@ public class SynchronizedRating<K> implements Rating<K> {
     @Override
     public synchronized List<K> getTop(int count) {
         return wrapped.getTop(count);
+    }
+
+    @Override
+    public Map<K, Integer> getStatistics(int count) {
+        return wrapped.getStatistics(count);
     }
 }

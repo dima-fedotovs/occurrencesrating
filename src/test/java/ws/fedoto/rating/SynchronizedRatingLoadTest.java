@@ -19,16 +19,20 @@
 
 package ws.fedoto.rating;
 
-import java.util.List;
-import java.util.Map;
+import org.junit.Test;
 
 /**
- * @author dima
+ *
  */
-public interface Rating<K> {
-    public void register(K key);
+public class SynchronizedRatingLoadTest extends LoadTest {
 
-    public List<K> getTop(int count);
+    @Override
+    protected Rating<String> createNewRating(int capacity) {
+        return new SynchronizedRating<>(new SimpleRating<String>(capacity));
+    }
 
-    public Map<K, Integer> getStatistics(int count);
+    @Test
+    public void test32Threads() throws Exception {
+        stressTest(32, 10000, 50000);
+    }
 }

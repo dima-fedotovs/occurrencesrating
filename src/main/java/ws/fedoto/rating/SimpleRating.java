@@ -19,10 +19,7 @@
 
 package ws.fedoto.rating;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -62,6 +59,18 @@ public class SimpleRating<K> implements Rating<K> {
         Node<K> current = top;
         for (int i = 0; i < realCount; i++) {
             result.add(current.getKey());
+            current = current.getNext();
+        }
+        return result;
+    }
+
+    @Override
+    public Map<K, Integer> getStatistics(int count) {
+        int realCount = Math.min(count, index.size());
+        Map<K, Integer> result = new LinkedHashMap<>(realCount + 1, 1.0f);
+        Node<K> current = top;
+        for (int i = 0; i < realCount; i++) {
+            result.put(current.getKey(), current.getWeight());
             current = current.getNext();
         }
         return result;
