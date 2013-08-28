@@ -22,11 +22,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="occurrencesrating" />
+        <module name="OccurrencesRating" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="occurrencesrating" target="1.7" />
+      <module name="OccurrencesRating" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

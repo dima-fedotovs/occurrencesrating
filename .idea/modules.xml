@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/occurrencesrating.iml" filepath="$PROJECT_DIR$/occurrencesrating.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OccurrencesRating.iml" filepath="$PROJECT_DIR$/OccurrencesRating.iml" />
     </modules>
   </component>
 </project>

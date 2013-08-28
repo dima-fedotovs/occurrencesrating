@@ -24,7 +24,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ws.fedoto.occurrencesrating</groupId>
-    <artifactId>occurrencesrating</artifactId>
+    <artifactId>OccurrencesRating</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <build>
