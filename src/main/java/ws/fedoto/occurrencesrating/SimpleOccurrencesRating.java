@@ -1,42 +1,42 @@
 /*
  * Copyright (c) 2013 Dimitrijs Fedotovs.
  *
- * This file is part of Rating library.
+ * This file is part of OccurrencesRating library.
  *
- * Rating library is free software: you can redistribute it and/or modify
+ * OccurrencesRating library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Rating library is distributed in the hope that it will be useful,
+ * OccurrencesRating library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Rating library.  If not, see <http://www.gnu.org/licenses/>.
+ * along with OccurrencesRating library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ws.fedoto.rating;
+package ws.fedoto.occurrencesrating;
 
 import java.util.*;
 
 /**
  *
  */
-public class SimpleRating<K> implements Rating<K> {
+public class SimpleOccurrencesRating<K> implements OccurrencesRating<K> {
     private final int capacity;
     private final Map<K, Node<K>> index;
     private Node<K> top;
     private Node<K> bottom;
     private Node<K> insertionPoint;
 
-    public SimpleRating(int capacity) {
+    public SimpleOccurrencesRating(int capacity) {
         this.capacity = capacity;
         if (capacity == Integer.MAX_VALUE) {
             this.index = new HashMap<>();
         } else {
-            this.index = new HashMap<>(capacity + 1, 1.0f);
+            this.index = new HashMap<>(capacity * 2);
         }
     }
 
@@ -46,7 +46,6 @@ public class SimpleRating<K> implements Rating<K> {
         if (node == null) {
             node = new Node<>(key);
             add(node);
-            index.put(key, node);
         } else {
             promote(node);
         }
@@ -56,10 +55,8 @@ public class SimpleRating<K> implements Rating<K> {
     public List<K> getTop(int count) {
         int realCount = Math.min(count, index.size());
         List<K> result = new ArrayList<>(realCount);
-        Node<K> current = top;
-        for (int i = 0; i < realCount; i++) {
+        for (Node<K> current = top; current != null; current = current.getNext()) {
             result.add(current.getKey());
-            current = current.getNext();
         }
         return result;
     }
@@ -67,16 +64,20 @@ public class SimpleRating<K> implements Rating<K> {
     @Override
     public Map<K, Integer> getStatistics(int count) {
         int realCount = Math.min(count, index.size());
-        Map<K, Integer> result = new LinkedHashMap<>(realCount + 1, 1.0f);
-        Node<K> current = top;
-        for (int i = 0; i < realCount; i++) {
+        Map<K, Integer> result = new LinkedHashMap<>(realCount * 2);
+        for (Node<K> current = top; current != null; current = current.getNext()) {
             result.put(current.getKey(), current.getWeight());
-            current = current.getNext();
         }
         return result;
     }
 
+    @Override
+    public int size() {
+        return index.size();
+    }
+
     private void add(Node<K> item) {
+        index.put(item.getKey(), item);
         if (top == null) {
             top = item;
             bottom = item;
@@ -89,7 +90,7 @@ public class SimpleRating<K> implements Rating<K> {
         insert(item, insertionPoint.getPrev(), insertionPoint);
         item.setWeight(insertionPoint.getWeight());
         insertionPoint = item;
-        if (index.size() == capacity) {
+        if (index.size() > capacity) {
             index.remove(bottom.getKey());
             remove(bottom);
         }

@@ -1,23 +1,23 @@
 /*
  * Copyright (c) 2013 Dimitrijs Fedotovs.
  *
- * This file is part of Rating library.
+ * This file is part of OccurrencesRating library.
  *
- * Rating library is free software: you can redistribute it and/or modify
+ * OccurrencesRating library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Rating library is distributed in the hope that it will be useful,
+ * OccurrencesRating library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Rating library.  If not, see <http://www.gnu.org/licenses/>.
+ * along with OccurrencesRating library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ws.fedoto.rating;
+package ws.fedoto.occurrencesrating;
 
 import java.util.List;
 import java.util.Map;
@@ -25,10 +25,10 @@ import java.util.Map;
 /**
  *
  */
-public class SynchronizedRating<K> implements Rating<K> {
-    private final Rating<K> wrapped;
+public class SynchronizedOccurrencesRating<K> implements OccurrencesRating<K> {
+    private final OccurrencesRating<K> wrapped;
 
-    public SynchronizedRating(Rating<K> wrapped) {
+    public SynchronizedOccurrencesRating(OccurrencesRating<K> wrapped) {
         this.wrapped = wrapped;
     }
 
@@ -45,5 +45,10 @@ public class SynchronizedRating<K> implements Rating<K> {
     @Override
     public Map<K, Integer> getStatistics(int count) {
         return wrapped.getStatistics(count);
+    }
+
+    @Override
+    public int size() {
+        return wrapped.size();
     }
 }

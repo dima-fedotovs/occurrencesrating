@@ -1,23 +1,23 @@
 /*
  * Copyright (c) 2013 Dimitrijs Fedotovs.
  *
- * This file is part of Rating library.
+ * This file is part of OccurrencesRating library.
  *
- * Rating library is free software: you can redistribute it and/or modify
+ * OccurrencesRating library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Rating library is distributed in the hope that it will be useful,
+ * OccurrencesRating library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Rating library.  If not, see <http://www.gnu.org/licenses/>.
+ * along with OccurrencesRating library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ws.fedoto.rating;
+package ws.fedoto.occurrencesrating;
 
 
 import org.junit.Test;
@@ -32,9 +32,9 @@ import static org.junit.Assert.assertEquals;
 /**
  *
  */
-public abstract class RatingTest {
+public abstract class OccurrencesRatingTest {
     private static final int HAPPY_CAPACITY = 7;
-    protected Rating<String> instance;
+    protected OccurrencesRating<String> instance;
 
     @Test
     public void testHappyPath() throws Exception {
@@ -134,9 +134,10 @@ public abstract class RatingTest {
         List<String> actual = instance.getTop(HAPPY_CAPACITY);
         List<String> expected = Arrays.asList(expectedItems);
         assertEquals(expected, actual);
+        assertEquals(expectedItems.length, instance.size());
     }
 
-    protected abstract Rating<String> createNewRating(int capacity);
+    protected abstract OccurrencesRating<String> createNewRating(int capacity);
 
     private static class Entry {
         String key;

@@ -1,23 +1,25 @@
 /*
  * Copyright (c) 2013 Dimitrijs Fedotovs.
  *
- * This file is part of Rating library.
+ * This file is part of OccurrencesRating library.
  *
- * Rating library is free software: you can redistribute it and/or modify
+ * OccurrencesRating library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Rating library is distributed in the hope that it will be useful,
+ * OccurrencesRating library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Rating library.  If not, see <http://www.gnu.org/licenses/>.
+ * along with OccurrencesRating library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ws.fedoto.rating;
+package ws.fedoto.occurrencesrating;
+
+import org.junit.Test;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -30,16 +32,76 @@ import static junit.framework.Assert.assertTrue;
 /**
  *
  */
-public abstract class LoadTest {
+public abstract class OccurrencesRatingLoadTest {
     private static final Random rand = new Random();
     private static final String TERMINATOR = "TERMINATE";
 
-    protected abstract Rating<String> createNewRating(int capacity);
+    protected abstract OccurrencesRating<String> createNewRating(int capacity);
 
+    @Test
+    public void test01Threads_10000_10000() throws Exception {
+        loadTest(1, 10000, 10000);
+    }
 
-    protected void stressTest(int threadsCount, int capacity, int samplesCount) throws Exception {
-        Rating<String> rating = createNewRating(capacity);
-        List<String> samples = generateSamples(samplesCount);
+    @Test
+    public void test01Threads_10000_15000() throws Exception {
+        loadTest(1, 10000, 15000);
+    }
+
+    @Test
+    public void test01Threads_100_20000() throws Exception {
+        loadTest(1, 100, 20000);
+    }
+
+    @Test
+    public void test01Threads_10000_2000() throws Exception {
+        loadTest(1, 10000, 2000);
+    }
+
+    @Test
+    public void test04Threads_10000_10000() throws Exception {
+        loadTest(4, 10000, 10000);
+    }
+
+    @Test
+    public void test04Threads_10000_15000() throws Exception {
+        loadTest(4, 10000, 15000);
+    }
+
+    @Test
+    public void test04Threads_100_20000() throws Exception {
+        loadTest(4, 100, 20000);
+    }
+
+    @Test
+    public void test04Threads_10000_2000() throws Exception {
+        loadTest(4, 10000, 2000);
+    }
+
+    @Test
+    public void test16Threads_10000_10000() throws Exception {
+        loadTest(16, 10000, 10000);
+    }
+
+    @Test
+    public void test16Threads_10000_15000() throws Exception {
+        loadTest(16, 10000, 15000);
+    }
+
+    @Test
+    public void test16Threads_100_20000() throws Exception {
+        loadTest(16, 100, 20000);
+    }
+
+    @Test
+    public void test16Threads_10000_2000() throws Exception {
+        loadTest(16, 10000, 2000);
+    }
+
+    protected void loadTest(int threadsCount, int capacity, int samplesCount) throws Exception {
+        OccurrencesRating<String> rating = createNewRating(capacity);
+        Set<String> keys = generateKeys(samplesCount);
+        List<String> samples = generateSamples(keys);
         LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<>(threadsCount * 100);
 
         ExecutorService pool = Executors.newFixedThreadPool(threadsCount);
@@ -59,7 +121,10 @@ public abstract class LoadTest {
         worker.printStats();
 
         Map<String, Integer> stats = rating.getStatistics(capacity);
-        assertEquals(Math.min(capacity, samplesCount), stats.size());
+
+        Set<String> actualKeys = new HashSet<>(stats.keySet());
+        actualKeys.removeAll(keys);
+        assertEquals(0, actualKeys.size());
         assertEquals(worker.count.get(), samples.size() - threadsCount);
         Integer lastWeight = null;
         for (Map.Entry<String, Integer> e : stats.entrySet()) {
@@ -71,25 +136,33 @@ public abstract class LoadTest {
         }
     }
 
-    private List<String> generateSamples(int samplesCount) {
-        List<String> samples = new ArrayList<>(samplesCount);
-        for (int i = 0; i < samplesCount; i++) {
-            String key = String.valueOf(rand.nextInt());
+    private List<String> generateSamples(Set<String> keys) {
+        List<String> samples = new ArrayList<>(keys.size() * 100);
+        for (String key : keys) {
             int count = rand.nextInt(1000);
             samples.addAll(Collections.nCopies(count, key));
         }
         return samples;
     }
 
+    private Set<String> generateKeys(int samplesCount) {
+        Set<String> keys = new HashSet<>(samplesCount * 2);
+        while (keys.size() < samplesCount) {
+            String key = String.valueOf(rand.nextInt());
+            keys.add(key);
+        }
+        return keys;
+    }
+
     private static class Worker implements Runnable {
         final BlockingQueue<String> queue;
-        final Rating<String> rating;
+        final OccurrencesRating<String> rating;
         final AtomicLong sum = new AtomicLong();
         final AtomicInteger count = new AtomicInteger();
         final AtomicLong min = new AtomicLong(Long.MAX_VALUE);
         final AtomicLong max = new AtomicLong(Long.MIN_VALUE);
 
-        private Worker(BlockingQueue<String> queue, Rating<String> rating) {
+        private Worker(BlockingQueue<String> queue, OccurrencesRating<String> rating) {
             this.queue = queue;
             this.rating = rating;
         }
