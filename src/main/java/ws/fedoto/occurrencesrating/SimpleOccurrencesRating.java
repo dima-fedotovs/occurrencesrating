@@ -55,8 +55,8 @@ public class SimpleOccurrencesRating<K> implements OccurrencesRating<K> {
     public List<K> getTop(int count) {
         int realCount = Math.min(count, index.size());
         List<K> result = new ArrayList<>(realCount);
-        for (Node<K> current = top; current != null; current = current.getNext()) {
-            result.add(current.getKey());
+        for (Node<K> current = top; current != null; current = current.next) {
+            result.add(current.key);
         }
         return result;
     }
@@ -65,8 +65,8 @@ public class SimpleOccurrencesRating<K> implements OccurrencesRating<K> {
     public Map<K, Integer> getStatistics(int count) {
         int realCount = Math.min(count, index.size());
         Map<K, Integer> result = new LinkedHashMap<>(realCount * 2);
-        for (Node<K> current = top; current != null; current = current.getNext()) {
-            result.put(current.getKey(), current.getWeight());
+        for (Node<K> current = top; current != null; current = current.next) {
+            result.put(current.key, current.weight);
         }
         return result;
     }
@@ -77,35 +77,35 @@ public class SimpleOccurrencesRating<K> implements OccurrencesRating<K> {
     }
 
     private void add(Node<K> item) {
-        index.put(item.getKey(), item);
+        index.put(item.key, item);
         if (top == null) {
             top = item;
             bottom = item;
             insertionPoint = item;
-            item.setPrev(null);
-            item.setNext(null);
-            item.setWeight(1);
+            item.prev = null;
+            item.next = null;
+            item.weight = 1;
             return;
         }
-        insert(item, insertionPoint.getPrev(), insertionPoint);
-        item.setWeight(insertionPoint.getWeight());
+        insert(item, insertionPoint.prev, insertionPoint);
+        item.weight = insertionPoint.weight;
         insertionPoint = item;
         if (index.size() > capacity) {
-            index.remove(bottom.getKey());
+            index.remove(bottom.key);
             remove(bottom);
         }
     }
 
     private void promote(Node<K> item) {
-        if (item == insertionPoint && item.getNext() != null) {
-            insertionPoint = item.getNext();
+        if (item == insertionPoint && item.next != null) {
+            insertionPoint = item.next;
         }
-        item.incWeight();
-        Node<K> newPrev = item.getPrev();
+        item.weight++;
+        Node<K> newPrev = item.prev;
         while (newPrev != null && item.compareTo(newPrev) >= 0) {
-            newPrev = newPrev.getPrev();
+            newPrev = newPrev.prev;
         }
-        if (newPrev == item.getPrev()) {
+        if (newPrev == item.prev) {
             return;
         }
         remove(item);
@@ -113,38 +113,38 @@ public class SimpleOccurrencesRating<K> implements OccurrencesRating<K> {
         if (newPrev == null) {
             newNext = top;
         } else {
-            newNext = newPrev.getNext();
+            newNext = newPrev.next;
         }
         insert(item, newPrev, newNext);
     }
 
     private void insert(Node<K> item, Node<K> newPrev, Node<K> newNext) {
-        item.setPrev(newPrev);
-        item.setNext(newNext);
+        item.prev = newPrev;
+        item.next = newNext;
         if (newPrev == null) {
             top = item;
         } else {
-            newPrev.setNext(item);
+            newPrev.next = item;
         }
         if (newNext == null) {
             bottom = item;
         } else {
-            newNext.setPrev(item);
+            newNext.prev = item;
         }
     }
 
     private void remove(Node<K> item) {
-        Node<K> oldPrev = item.getPrev();
-        Node<K> oldNext = item.getNext();
+        Node<K> oldPrev = item.prev;
+        Node<K> oldNext = item.next;
         if (oldPrev == null) {
             top = oldNext;
         } else {
-            oldPrev.setNext(oldNext);
+            oldPrev.next = oldNext;
         }
         if (oldNext == null) {
             bottom = oldPrev;
         } else {
-            oldNext.setPrev(oldPrev);
+            oldNext.prev = oldPrev;
         }
     }
 
@@ -156,38 +156,6 @@ public class SimpleOccurrencesRating<K> implements OccurrencesRating<K> {
 
         public Node(K key) {
             this.key = key;
-        }
-
-        public K getKey() {
-            return key;
-        }
-
-        public int getWeight() {
-            return weight;
-        }
-
-        void setWeight(int weight) {
-            this.weight = weight;
-        }
-
-        public void incWeight() {
-            this.weight++;
-        }
-
-        public Node<K> getNext() {
-            return next;
-        }
-
-        public void setNext(Node<K> next) {
-            this.next = next;
-        }
-
-        public Node<K> getPrev() {
-            return prev;
-        }
-
-        public void setPrev(Node<K> prev) {
-            this.prev = prev;
         }
 
         @Override
