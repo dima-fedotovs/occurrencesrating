@@ -21,13 +21,23 @@ package ws.fedoto.occurrencesrating;
 
 import org.junit.Test;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -98,11 +108,12 @@ public abstract class OccurrencesRatingLoadTest {
         loadTest(16, 10000, 2000);
     }
 
-    protected void loadTest(int threadsCount, int capacity, int samplesCount) throws Exception {
+    protected void loadTest(int threadsCount, int capacity, int keysCount) throws Exception {
         OccurrencesRating<String> rating = createNewRating(capacity);
-        Set<String> keys = generateKeys(samplesCount);
+        Set<String> keys = generateKeys(keysCount);
         List<String> samples = generateSamples(keys);
         LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<>(threadsCount * 100);
+        System.out.printf("testing %s with %d threads; capacity: %d; keys: %d; samples: %d\n", rating.getClass().getSimpleName(), threadsCount, capacity, keysCount, samples.size());
 
         ExecutorService pool = Executors.newFixedThreadPool(threadsCount);
         Worker worker = new Worker(queue, rating);
