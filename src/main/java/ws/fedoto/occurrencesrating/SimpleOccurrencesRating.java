@@ -37,11 +37,7 @@ public class SimpleOccurrencesRating<K> implements OccurrencesRating<K> {
 
     public SimpleOccurrencesRating(int capacity) {
         this.capacity = capacity;
-        if (capacity == Integer.MAX_VALUE) {
-            this.index = new HashMap<>();
-        } else {
-            this.index = new HashMap<>(capacity * 2);
-        }
+        this.index = new HashMap<>(capacity * 2);
     }
 
     @Override
